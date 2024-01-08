@@ -54,6 +54,7 @@ Fit Me Up API is an API that develop using NodeJS with AdonisJS as the framework
     - MAMP (for MacOS) :
 
     <img width="648" alt="285381472-cc83c2ff-ce24-4b0c-8f97-fd8419ed657a" src="https://github.com/TioNovriadiPutra/fit-me-up-api/assets/129643417/9c061206-96c7-4e22-9151-50071f1a9fda">
+    
     - XAMPP (for Windows) :
 
      ![285381795-ea763612-f138-4316-acb0-ddc7dbd44fe7](https://github.com/TioNovriadiPutra/fit-me-up-api/assets/129643417/80934e94-0b35-4a89-84f9-1413c83d1f05)
