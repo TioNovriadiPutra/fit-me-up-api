@@ -65,7 +65,11 @@ Fit Me Up API is an API that develop using NodeJS with AdonisJS as the framework
 
    ```bash
    node ace migration:run
-5. Run :
+5. Run the seeder database :
+
+   ```bash
+   node ace db:seed
+6. Run API :
 
    ```bash
    node ace serve --watch
