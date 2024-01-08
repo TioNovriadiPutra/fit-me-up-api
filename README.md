@@ -29,7 +29,7 @@ Fit Me Up API is an API that develop using NodeJS with AdonisJS as the framework
    
    ```bash
    git clone https://github.com/TioNovriadiPutra/fit-me-up-api.git
-2. Navigate to pharmacin-api folder :
+2. Navigate to fit-me-up-api folder :
 
    ```bash
    cd fit-me-up-api
@@ -57,15 +57,15 @@ Fit Me Up API is an API that develop using NodeJS with AdonisJS as the framework
     - XAMPP (for Windows) :
 
      ![285381795-ea763612-f138-4316-acb0-ddc7dbd44fe7](https://github.com/TioNovriadiPutra/fit-me-up-api/assets/129643417/80934e94-0b35-4a89-84f9-1413c83d1f05)
-3. Navigate to pharmacin-api folder :
+3. Navigate to fit-me-up-api folder :
 
    ```bash
-   cd pharmacin-api
+   cd fit-me-up-api
 4. Migrate the database :
 
    ```bash
    node ace migration:run
-5. Run the seeder database :
+5. Run the database seeder :
 
    ```bash
    node ace db:seed
