@@ -2,14 +2,20 @@ import { DateTime } from "luxon";
 import {
   BaseModel,
   BelongsTo,
+  HasMany,
+  HasOne,
   ManyToMany,
   belongsTo,
   column,
+  hasMany,
+  hasOne,
   manyToMany,
 } from "@ioc:Adonis/Lucid/Orm";
 import User from "./User";
 import Domicile from "./Domicile";
 import FavSport from "./FavSport";
+import Coach from "./Coach";
+import Venue from "./Venue";
 
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
@@ -46,4 +52,10 @@ export default class Profile extends BaseModel {
     pivotTable: "choose_sports",
   })
   public favSports: ManyToMany<typeof FavSport>;
+
+  @hasOne(() => Coach)
+  public coach: HasOne<typeof Coach>;
+
+  @hasMany(() => Venue)
+  public venues: HasMany<typeof Venue>;
 }

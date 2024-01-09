@@ -1,7 +1,7 @@
 import { schema, CustomMessages, rules } from "@ioc:Adonis/Core/Validator";
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
-export default class RegisterValidator {
+export default class RegisterCoachValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -40,6 +40,14 @@ export default class RegisterValidator {
     ]),
     dateBirth: schema.date(),
     password: schema.string([rules.minLength(8), rules.confirmed()]),
+    favSportIds: schema.array([rules.minLength(1)]).members(schema.number()),
+    schedules: schema.array([rules.minLength(1)]).members(
+      schema.object().members({
+        scheduleDay: schema.number([rules.range(1, 7)]),
+        scheduleTimeStart: schema.string(),
+        scheduleTimeEnd: schema.string(),
+      })
+    ),
   });
 
   /**
@@ -63,5 +71,13 @@ export default class RegisterValidator {
     "password.required": "Password must be filled!",
     "password.minLength": "Password at least 8 characters!",
     "password_confirmation.confirmed": "Password Confirmation failed!",
+    "favSportIds.required": "Favorite sports must be choose!",
+    "favSportIds.minLength": "Favorite sports must be choose!",
+    "schedules.required": "Coach Schedule must be filled!",
+    "schedules.minLength": "Coach Schedule must be filled!",
+    "schedules.*.scheduleDay": "Schedule Day must be filled!",
+    "schedules.*.scheduleDay.range": "Day incorrect!",
+    "schedules.*.scheduleTimeStart": "Schedule Time Start must be filled!",
+    "schedules.*.scheduleTimeEnd": "Schedule Time End must be filled!",
   };
 }

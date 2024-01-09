@@ -1,7 +1,7 @@
 import { schema, CustomMessages, rules } from "@ioc:Adonis/Core/Validator";
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
-export default class RegisterValidator {
+export default class RegisterVenueValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -40,6 +40,27 @@ export default class RegisterValidator {
     ]),
     dateBirth: schema.date(),
     password: schema.string([rules.minLength(8), rules.confirmed()]),
+    domicileId: schema.number(),
+    venueName: schema.string(),
+    venueAddress: schema.string(),
+    venueSports: schema.array([rules.minLength(1)]).members(
+      schema.object().members({
+        favSportId: schema.number(),
+        venueMaxCapacity: schema.number(),
+        venuePricing: schema.number(),
+      })
+    ),
+    venueSchedules: schema
+      .array([rules.minLength(1)])
+      .members(schema.number([rules.range(1, 7)])),
+    venueTimeOpen: schema.string(),
+    venueTimeClose: schema.string(),
+    venuePhotos: schema.array([rules.minLength(1)]).members(
+      schema.file({
+        extnames: ["png", "jpg", "jpeg"],
+      })
+    ),
+    venueDescription: schema.string(),
   });
 
   /**
@@ -63,5 +84,19 @@ export default class RegisterValidator {
     "password.required": "Password must be filled!",
     "password.minLength": "Password at least 8 characters!",
     "password_confirmation.confirmed": "Password Confirmation failed!",
+    "domicileId.required": "Domicile must be filled!",
+    "venueName.required": "Venue Name must be filled!",
+    "venueAddress.required": "Venue Address must be filled!",
+    "venueSports.required": "Venue Sports must be filled!",
+    "venueSports.minLength": "Venue Sports must be filled!",
+    "venueSports.*.venueMaxCapacity": "Venue Max Capacity must be filled!",
+    "venueSports.*.venuePricing": "Venue Pricing must be filled!",
+    "venueSchedules.required": "Venue Schedules must be filled!",
+    "venueSchedules.minLength": "Venue Schedules must be filled!",
+    "venueTimeOpen.required": "Openning time must be filled!",
+    "venueTimeClose.required": "Closing time must be filled!",
+    "venuePhotos.required": "Venue Photo must be filled!",
+    "venuePhotos.minLength": "Venue Photo must be filled!",
+    "venueDescription.required": "Venue Description must be filled!",
   };
 }

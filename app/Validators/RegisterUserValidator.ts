@@ -1,7 +1,7 @@
 import { schema, CustomMessages, rules } from "@ioc:Adonis/Core/Validator";
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
-export default class RegisterValidator {
+export default class RegisterUserValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -40,6 +40,8 @@ export default class RegisterValidator {
     ]),
     dateBirth: schema.date(),
     password: schema.string([rules.minLength(8), rules.confirmed()]),
+    favSportIds: schema.array([rules.minLength(1)]).members(schema.number()),
+    domicileId: schema.number(),
   });
 
   /**
@@ -63,5 +65,8 @@ export default class RegisterValidator {
     "password.required": "Password must be filled!",
     "password.minLength": "Password at least 8 characters!",
     "password_confirmation.confirmed": "Password Confirmation failed!",
+    "favSportIds.required": "Favorite sports must be choose!",
+    "favSportIds.minLength": "Favorite sports must be choose!",
+    "domicileId.required": "Domicile must be filled!",
   };
 }

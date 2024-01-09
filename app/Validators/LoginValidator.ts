@@ -1,7 +1,7 @@
-import { schema, CustomMessages, rules } from "@ioc:Adonis/Core/Validator";
+import { schema, CustomMessages } from "@ioc:Adonis/Core/Validator";
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
-export default class RegisterValidator {
+export default class LoginValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -24,22 +24,8 @@ export default class RegisterValidator {
    *    ```
    */
   public schema = schema.create({
-    fullName: schema.string([
-      rules.alpha({
-        allow: ["space"],
-      }),
-    ]),
-    email: schema.string([
-      rules.email({
-        ignoreMaxLength: true,
-      }),
-      rules.unique({
-        table: "users",
-        column: "email",
-      }),
-    ]),
-    dateBirth: schema.date(),
-    password: schema.string([rules.minLength(8), rules.confirmed()]),
+    email: schema.string(),
+    password: schema.string(),
   });
 
   /**
@@ -54,14 +40,7 @@ export default class RegisterValidator {
    *
    */
   public messages: CustomMessages = {
-    "fullName.required": "Full Name must be filled!",
-    "fullName.alpha": "Full Name can only contain alphabets!",
     "email.required": "Email must be filled!",
-    "email.email": "Email format incorrect!",
-    "email.unique": "Email already registered!",
-    "dateBirth.required": "Date of Birth must be filled!",
     "password.required": "Password must be filled!",
-    "password.minLength": "Password at least 8 characters!",
-    "password_confirmation.confirmed": "Password Confirmation failed!",
   };
 }
