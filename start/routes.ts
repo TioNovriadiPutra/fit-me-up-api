@@ -29,4 +29,25 @@ Route.group(() => {
   Route.post("/", "FavSportsController.addFavSport")
     .middleware(["auth"])
     .as("fav-sport.add-fav-sport");
+  Route.put("/:id", "FavSportsController.updateFavSport")
+    .as("fav-sport.update-fav-sport")
+    .middleware(["auth"]);
+  Route.delete("/:id", "FavSportsController.deleteFavSport")
+    .as("fav-sport.delete-fav-sport")
+    .middleware(["auth"]);
 }).prefix("/fav-sport");
+
+Route.group(() => {
+  Route.get("/", "DomicilesController.getAllDomiciles").as(
+    "domicile.get-all-domiciles"
+  );
+  Route.post("/", "DomicilesController.addDomicile")
+    .as("domicile.add-domicile")
+    .middleware(["auth"]);
+  Route.put("/:id", "DomicilesController.updateDomicile")
+    .as("domicile.update-domicile")
+    .middleware(["auth"]);
+  Route.delete("/:id", "DomicilesController.deleteDomicile")
+    .as("domicile.delete-domicile")
+    .middleware(["auth"]);
+}).prefix("/domicile");
