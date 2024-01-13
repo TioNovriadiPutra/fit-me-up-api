@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import { BaseModel, HasMany, column, hasMany } from "@ioc:Adonis/Lucid/Orm";
 import Profile from "./Profile";
+import LfgMatch from "./LfgMatch";
 
 export default class Domicile extends BaseModel {
   @column({ isPrimary: true })
@@ -17,4 +18,7 @@ export default class Domicile extends BaseModel {
 
   @hasMany(() => Profile)
   public profiles: HasMany<typeof Profile>;
+
+  @hasMany(() => LfgMatch)
+  public lfgMatches: HasMany<typeof LfgMatch>;
 }

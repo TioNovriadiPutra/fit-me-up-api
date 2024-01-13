@@ -51,3 +51,20 @@ Route.group(() => {
     .as("domicile.delete-domicile")
     .middleware(["auth"]);
 }).prefix("/domicile");
+
+Route.group(() => {
+  Route.get("/domicile/:id", "VenuesController.getVenuesByDomicile").as(
+    "venue.get-venues-by-domicile"
+  );
+})
+  .prefix("/venue")
+  .middleware(["auth"]);
+
+Route.group(() => {
+  Route.post("/", "LfgMatchesController.addLfgMatch").as("lfg.add-lfg-match");
+  Route.delete("/:id", "LfgMatchesController.deleteLfgMatch").as(
+    "lfg.delete-lfg-match"
+  );
+})
+  .prefix("/lfg")
+  .middleware(["auth"]);

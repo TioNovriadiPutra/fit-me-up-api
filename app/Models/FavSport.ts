@@ -9,6 +9,7 @@ import {
 } from "@ioc:Adonis/Lucid/Orm";
 import Profile from "./Profile";
 import VenueChooseSport from "./VenueChooseSport";
+import LfgMatch from "./LfgMatch";
 
 export default class FavSport extends BaseModel {
   @column({ isPrimary: true })
@@ -33,4 +34,7 @@ export default class FavSport extends BaseModel {
 
   @hasMany(() => VenueChooseSport)
   public venueChooseSports: HasMany<typeof VenueChooseSport>;
+
+  @hasMany(() => LfgMatch)
+  public lfgMatches: HasMany<typeof LfgMatch>;
 }
