@@ -43,6 +43,7 @@ export default class LfgMatchesController {
         newLfgMatch.profileId = profileData.id;
 
         await newLfgMatch.save();
+        await newLfgMatch.related("players").attach([auth.user.id]);
 
         return response.created({ message: "LFG Match added successfully!" });
       } catch (error) {

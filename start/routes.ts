@@ -61,10 +61,24 @@ Route.group(() => {
   .middleware(["auth"]);
 
 Route.group(() => {
+  Route.get("/players/:id", "LfgMatchesController.showLfgMatchPlayers").as(
+    "lfg.show-lfg-match-players"
+  );
   Route.post("/", "LfgMatchesController.addLfgMatch").as("lfg.add-lfg-match");
   Route.delete("/:id", "LfgMatchesController.deleteLfgMatch").as(
     "lfg.delete-lfg-match"
   );
 })
   .prefix("/lfg")
+  .middleware(["auth"]);
+
+Route.group(() => {
+  Route.get("/", "CoachesController.getAvailableCoaches").as(
+    "coach.get-available-coaches"
+  );
+  Route.get("/:id", "CoachesController.showCoachDetail").as(
+    "coach.show-coach-detail"
+  );
+})
+  .prefix("/coach")
   .middleware(["auth"]);

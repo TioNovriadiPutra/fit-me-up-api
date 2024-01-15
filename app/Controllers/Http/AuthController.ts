@@ -84,6 +84,7 @@ export default class AuthController {
 
       await newUser.related("profile").save(newProfile);
       await newProfile.related("coach").save(newCoach);
+      await newProfile.related("favSports").attach(data.favSportIds);
 
       for (let i = 0; i < data.schedules.length; i++) {
         const newCoachSchedule = new CoachSchedule();
