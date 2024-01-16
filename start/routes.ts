@@ -23,6 +23,34 @@ Route.group(() => {
 }).prefix("/auth");
 
 Route.group(() => {
+  Route.group(() => {
+    Route.get("/active", "UsersController.getActiveBooking").as(
+      "user.book.get-active-booking"
+    );
+    Route.get("/history", "UsersController.getHistoryBooking").as(
+      "user.book.get-history-booking"
+    );
+    Route.get("/detail/:id", "UsersController.showBookingDetail").as(
+      "user.book.show-booking-detail"
+    );
+    Route.post("/coach/:id", "UsersController.bookCoach").as(
+      "user.book.book-coach"
+    );
+    Route.post("/venue/:id", "UsersController.bookVenue").as(
+      "user.book.book-venue"
+    );
+  }).prefix("/book");
+  Route.get("/join-lfg/:id", "UsersController.joinLfgMatch").as(
+    "user.join-lfg-match"
+  );
+  Route.get("/quit-lfg/:id", "UsersController.quitLfgMatch").as(
+    "user.quit-lfg-match"
+  );
+})
+  .prefix("/user")
+  .middleware(["auth"]);
+
+Route.group(() => {
   Route.get("/", "FavSportsController.getAllFavSports").as(
     "fav-sport.get-all-fav-sports"
   );
@@ -61,6 +89,12 @@ Route.group(() => {
   .middleware(["auth"]);
 
 Route.group(() => {
+  Route.get("/nearby", "LfgMatchesController.getNearbyLfg").as(
+    "lfg.get-nearby-lfg"
+  );
+  Route.get("/available", "LfgMatchesController.getAvailableLfg").as(
+    "lfg.get-available-lfg"
+  );
   Route.get("/players/:id", "LfgMatchesController.showLfgMatchPlayers").as(
     "lfg.show-lfg-match-players"
   );
@@ -78,6 +112,9 @@ Route.group(() => {
   );
   Route.get("/:id", "CoachesController.showCoachDetail").as(
     "coach.show-coach-detail"
+  );
+  Route.get("/pending/:id", "CoachesController.getPendingCoachRequest").as(
+    "coach.get-pending-coach-request"
   );
 })
   .prefix("/coach")

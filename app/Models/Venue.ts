@@ -12,6 +12,7 @@ import VenueSchedule from "./VenueSchedule";
 import VenuePhoto from "./VenuePhoto";
 import VenueChooseSport from "./VenueChooseSport";
 import LfgMatch from "./LfgMatch";
+import VenueBooking from "./VenueBooking";
 
 export default class Venue extends BaseModel {
   @column({ isPrimary: true })
@@ -55,4 +56,7 @@ export default class Venue extends BaseModel {
 
   @hasMany(() => LfgMatch)
   public lfgMatches: HasMany<typeof LfgMatch>;
+
+  @hasMany(() => VenueBooking)
+  public venueBookings: HasMany<typeof VenueBooking>;
 }

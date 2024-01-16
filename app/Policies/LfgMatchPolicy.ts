@@ -3,7 +3,7 @@ import LfgMatch from "App/Models/LfgMatch";
 import User from "App/Models/User";
 
 export default class LfgMatchPolicy extends BasePolicy {
-  public async delete(user: User, lfgMatch: LfgMatch) {
+  public async gm(user: User, lfgMatch: LfgMatch) {
     return user.id === lfgMatch.profileId;
   }
 }

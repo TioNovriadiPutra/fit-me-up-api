@@ -9,6 +9,7 @@ import {
 } from "@ioc:Adonis/Lucid/Orm";
 import Profile from "./Profile";
 import CoachSchedule from "./CoachSchedule";
+import CoachBooking from "./CoachBooking";
 
 export default class Coach extends BaseModel {
   @column({ isPrimary: true })
@@ -31,4 +32,7 @@ export default class Coach extends BaseModel {
 
   @hasMany(() => CoachSchedule)
   public schedules: HasMany<typeof CoachSchedule>;
+
+  @hasMany(() => CoachBooking)
+  public coachBookings: HasMany<typeof CoachBooking>;
 }

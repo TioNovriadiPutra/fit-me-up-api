@@ -7,10 +7,10 @@ import {
   column,
   manyToMany,
 } from "@ioc:Adonis/Lucid/Orm";
-import Venue from "./Venue";
 import Profile from "./Profile";
 import FavSport from "./FavSport";
 import Domicile from "./Domicile";
+import VenueBooking from "./VenueBooking";
 
 export default class LfgMatch extends BaseModel {
   @column({ isPrimary: true })
@@ -23,19 +23,20 @@ export default class LfgMatch extends BaseModel {
   public matchTime: DateTime;
 
   @column()
-  public matchDuration?: number;
-
-  @column()
   public matchMinPlayer: number;
+
+  @column({
+    serialize: (value: number) => {
+      return Boolean(value);
+    },
+  })
+  public status: boolean;
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime;
-
-  @column()
-  public venueId?: number;
 
   @column()
   public profileId: number;
@@ -46,8 +47,8 @@ export default class LfgMatch extends BaseModel {
   @column()
   public domicileId: number;
 
-  @belongsTo(() => Venue)
-  public venue: BelongsTo<typeof Venue>;
+  @column()
+  public venueBookingId?: number;
 
   @belongsTo(() => Profile)
   public gm: BelongsTo<typeof Profile>;
@@ -62,4 +63,7 @@ export default class LfgMatch extends BaseModel {
     pivotTable: "lfg_match_players",
   })
   public players: ManyToMany<typeof Profile>;
+
+  @belongsTo(() => VenueBooking)
+  public venueBooking: BelongsTo<typeof VenueBooking>;
 }

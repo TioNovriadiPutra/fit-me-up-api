@@ -1,6 +1,8 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import { Role } from "App/Enums/Role";
 import DataNotFoundException from "App/Exceptions/DataNotFoundException";
+import ForbiddenException from "App/Exceptions/ForbiddenException";
+import CoachBooking from "App/Models/CoachBooking";
 import Profile from "App/Models/Profile";
 
 export default class CoachesController {
@@ -33,6 +35,29 @@ export default class CoachesController {
     } catch (error) {
       if (error.status === 404) {
         throw new DataNotFoundException("Coach data not found!");
+      }
+    }
+  }
+
+  public async getPendingCoachRequest({
+    response,
+    params,
+    bouncer,
+  }: HttpContextContract) {
+    try {
+      await bouncer.with("CoachPolicy").authorize("getRequest");
+
+      const coachBookingData = await CoachBooking.query()
+        .where("coach_id", params.id)
+        .andWhere("accept", false);
+
+      return response.ok({
+        message: "Data fetched!",
+        data: coachBookingData,
+      });
+    } catch (error) {
+      if (error.status === 403) {
+        throw new ForbiddenException();
       }
     }
   }

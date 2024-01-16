@@ -1,7 +1,15 @@
 import { DateTime } from "luxon";
-import { BaseModel, BelongsTo, belongsTo, column } from "@ioc:Adonis/Lucid/Orm";
+import {
+  BaseModel,
+  BelongsTo,
+  HasMany,
+  belongsTo,
+  column,
+  hasMany,
+} from "@ioc:Adonis/Lucid/Orm";
 import FavSport from "./FavSport";
 import Venue from "./Venue";
+import VenueBooking from "./VenueBooking";
 
 export default class VenueChooseSport extends BaseModel {
   @column({ isPrimary: true })
@@ -27,4 +35,7 @@ export default class VenueChooseSport extends BaseModel {
 
   @belongsTo(() => Venue)
   public venue: BelongsTo<typeof Venue>;
+
+  @hasMany(() => VenueBooking)
+  public venueBookings: HasMany<typeof VenueBooking>;
 }

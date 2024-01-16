@@ -13,6 +13,9 @@ export default class LfgMatchesController {
       const lfgMatchData = await LfgMatch.query()
         .preload("gm")
         .preload("players")
+        .preload("venueBooking", (tmp) => {
+          tmp.preload("venue").preload("venueChooseSport");
+        })
         .where("id", params.id)
         .firstOrFail();
 
@@ -64,7 +67,7 @@ export default class LfgMatchesController {
     try {
       const lfgMatchData = await LfgMatch.findOrFail(params.id);
 
-      await bouncer.with("LfgMatchPolicy").authorize("delete", lfgMatchData);
+      await bouncer.with("LfgMatchPolicy").authorize("gm", lfgMatchData);
 
       await lfgMatchData.delete();
 
@@ -75,6 +78,44 @@ export default class LfgMatchesController {
       } else if (error.status === 403) {
         throw new ForbiddenException();
       }
+    }
+  }
+
+  public async getNearbyLfg({ response, auth }: HttpContextContract) {
+    if (auth.user) {
+      try {
+        const profileData = await Profile.query()
+          .preload("domicile")
+          .where("id", auth.user.id)
+          .firstOrFail();
+
+        const lfgData = await LfgMatch.query()
+          .preload("sportType")
+          .preload("domicile")
+          .whereHas("domicile", (tmp) => {
+            if (profileData.domicileId) {
+              tmp.where("id", profileData.domicileId);
+            }
+          })
+          .andWhere("status", false);
+
+        return response.ok({ message: "Data fetched!", data: lfgData });
+      } catch (error) {
+        if (error.status === 404) {
+          throw new DataNotFoundException("Profile data not found!");
+        }
+      }
+    }
+  }
+
+  public async getAvailableLfg({ response, auth }: HttpContextContract) {
+    if (auth.user) {
+      const lfgData = await LfgMatch.query()
+        .preload("sportType")
+        .preload("domicile")
+        .where("status", false);
+
+      return response.ok({ message: "Data fetched", data: lfgData });
     }
   }
 }

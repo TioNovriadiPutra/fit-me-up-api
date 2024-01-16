@@ -14,8 +14,11 @@ import { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 |
 */
 export default class ForbiddenException extends AuthorizationException {
-  constructor(message: string = "You dont have access to this service!") {
-    super(message);
+  constructor(
+    message: string = "You dont have access to this service!",
+    status: number = 403
+  ) {
+    super(message, status);
   }
 
   handle(error: any, ctx: HttpContextContract) {
