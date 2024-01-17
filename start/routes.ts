@@ -116,6 +116,9 @@ Route.group(() => {
   Route.get("/pending/:id", "CoachesController.getPendingCoachRequest").as(
     "coach.get-pending-coach-request"
   );
+  Route.put("/", "CoachesController.updateCoachProfile").as(
+    "coach.update-coach-profile"
+  );
 })
   .prefix("/coach")
   .middleware(["auth"]);

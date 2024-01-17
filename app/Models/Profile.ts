@@ -33,6 +33,9 @@ export default class Profile extends BaseModel {
   @column()
   public activeBalance: number;
 
+  @column()
+  public profilePic?: string;
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 

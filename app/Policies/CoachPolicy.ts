@@ -6,4 +6,8 @@ export default class CoachPolicy extends BasePolicy {
   public async getRequest(user: User) {
     return user.roleId === Role["COACH"] || user.roleId === Role["ADMIN"];
   }
+
+  public async update(user: User) {
+    return user.roleId === Role["COACH"];
+  }
 }
