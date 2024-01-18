@@ -110,11 +110,28 @@ Route.group(() => {
   Route.get("/", "CoachesController.getAvailableCoaches").as(
     "coach.get-available-coaches"
   );
+  Route.group(() => {
+    Route.get("/", "CoachesController.getPendingCoachRequest").as(
+      "coach.get-pending-coach-request"
+    );
+    Route.patch("/accept/:id", "CoachesController.acceptCoachRequest").as(
+      "coach.accept-coach-request"
+    );
+    Route.patch("/decline/:id", "CoachesController.declineCoachRequest").as(
+      "coach.decline-coach-request"
+    );
+  }).prefix("/pending");
+  Route.get("/ongoing", "CoachesController.getOngoingCoachRequest").as(
+    "coach.get-ongoing-coach-request"
+  );
+  Route.get("/history", "CoachesController.getCoachRequestHistory").as(
+    "coach.get-coach-request-history"
+  );
   Route.get("/:id", "CoachesController.showCoachDetail").as(
     "coach.show-coach-detail"
   );
-  Route.get("/pending/:id", "CoachesController.getPendingCoachRequest").as(
-    "coach.get-pending-coach-request"
+  Route.get("/book/detail/:id", "CoachesController.showCoachRequestDetail").as(
+    "coach.show-coach-request-detail"
   );
   Route.put("/", "CoachesController.updateCoachProfile").as(
     "coach.update-coach-profile"

@@ -3,6 +3,7 @@ import { BaseModel, BelongsTo, belongsTo, column } from "@ioc:Adonis/Lucid/Orm";
 import Profile from "./Profile";
 import Coach from "./Coach";
 import VenueBooking from "./VenueBooking";
+import { Status } from "App/Enums/Status";
 
 export default class CoachBooking extends BaseModel {
   @column({ isPrimary: true })
@@ -17,12 +18,8 @@ export default class CoachBooking extends BaseModel {
   @column()
   public totalPrice: number;
 
-  @column({
-    serialize: (value: number) => {
-      return Boolean(value);
-    },
-  })
-  public accept: boolean;
+  @column()
+  public status: Status;
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
