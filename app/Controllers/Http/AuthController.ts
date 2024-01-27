@@ -181,10 +181,12 @@ export default class AuthController {
       const data = await request.validate(LoginValidator);
 
       const token = await auth.use("api").attempt(data.email, data.password);
+      const users = await User.query().where("email", data.email)
 
       return response.ok({
         message: "Login success!",
         token: token.token,
+        role: users[0].roleId
       });
     } catch (error) {
       if (error.status === 422) {
