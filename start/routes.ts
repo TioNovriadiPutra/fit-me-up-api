@@ -81,8 +81,34 @@ Route.group(() => {
 }).prefix("/domicile");
 
 Route.group(() => {
+  Route.get("/book/:id", "VenuesController.showVenueRequestDetail").as(
+    "venue.show-venue-request-detail"
+  );
   Route.get("/domicile/:id", "VenuesController.getVenuesByDomicile").as(
     "venue.get-venues-by-domicile"
+  );
+  Route.group(() => {
+    Route.get("/", "VenuesController.getPendingVenueRequest").as(
+      "venue.get-venue-request"
+    );
+    Route.patch("/accept/:id", "VenuesController.acceptVenueRequest").as(
+      "venue.pending.accept-venue-request"
+    );
+    Route.patch("/decline/:id", "VenuesController.declineVenueRequest").as(
+      "venue.pendin.decline-venue-request"
+    );
+  }).prefix("/pending");
+  Route.get("/ongoing", "VenuesController.getOngoingVenueRequest").as(
+    "venue.get-ongoing-venue-request"
+  );
+  Route.get("/history", "VenuesController.getVenueRequestHistory").as(
+    "venue.get-venue-request-history"
+  );
+  Route.get("/owner", "VenuesController.getOwnerVenueList").as(
+    "venue.get-owner-venue-list"
+  );
+  Route.get("/detail/:id", "VenuesController.showVenueDetail").as(
+    "venue.show-venue-detail"
   );
 })
   .prefix("/venue")

@@ -11,6 +11,7 @@ import Profile from "./Profile";
 import Venue from "./Venue";
 import VenueChooseSport from "./VenueChooseSport";
 import CoachBooking from "./CoachBooking";
+import { Status } from "App/Enums/Status";
 
 export default class VenueBooking extends BaseModel {
   @column({ isPrimary: true })
@@ -28,19 +29,11 @@ export default class VenueBooking extends BaseModel {
   @column()
   public totalPrice: number;
 
-  @column({
-    serialize: (value: number) => {
-      return Boolean(value);
-    },
-  })
-  public accept: boolean;
+  @column()
+  public status: Status;
 
-  @column({
-    serialize: (value: number) => {
-      return Boolean(value);
-    },
-  })
-  public status: boolean;
+  @column()
+  public orderId: string;
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;

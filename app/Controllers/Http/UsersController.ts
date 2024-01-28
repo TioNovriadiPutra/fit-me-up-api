@@ -2,6 +2,7 @@ import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import CustomValidationException from "App/Exceptions/CustomValidationException";
 import DataNotFoundException from "App/Exceptions/DataNotFoundException";
 import ForbiddenException from "App/Exceptions/ForbiddenException";
+import generateRandomId from "App/Helpers/GenerateRandomId";
 import CoachBooking from "App/Models/CoachBooking";
 import LfgMatch from "App/Models/LfgMatch";
 import Profile from "App/Models/Profile";
@@ -59,62 +60,56 @@ export default class UsersController {
     params,
     bouncer,
   }: HttpContextContract) {
-    if (auth.user) {
-      try {
-        const data = await request.validate(BookVenueValidator);
+    try {
+      const data = await request.validate(BookVenueValidator);
 
-        if (data.lfgMatchId) {
-          const lfgMatchData = await LfgMatch.findOrFail(data.lfgMatchId);
+      if (data.lfgMatchId) {
+        const lfgMatchData = await LfgMatch.findOrFail(data.lfgMatchId);
 
-          await bouncer.with("LfgMatchPolicy").authorize("gm", lfgMatchData);
-        }
+        await bouncer.with("LfgMatchPolicy").authorize("gm", lfgMatchData);
+      }
 
-        const venueProfileData = await Profile.query()
-          .whereHas("venues", (tmp) => {
-            tmp.where("id", params.id);
-          })
-          .firstOrFail();
-        venueProfileData.activeBalance =
-          venueProfileData.activeBalance + data.totalPrice;
+      const profileData = await Profile.findByOrFail("user_id", auth.user!.id);
+      profileData.activeBalance = profileData.activeBalance - data.totalPrice;
 
-        await venueProfileData.save();
+      await profileData.save();
 
-        const newVenueBooking = new VenueBooking();
-        newVenueBooking.playerTotal = data.playerTotal;
-        newVenueBooking.bookingTime = DateTime.fromISO(data.bookingTime);
-        newVenueBooking.duration = data.duration;
-        newVenueBooking.totalPrice = data.totalPrice;
-        newVenueBooking.profileId = auth.user.id;
-        newVenueBooking.venueId = params.id;
-        newVenueBooking.venueChooseSportId = data.venueChooseSportId;
+      const newVenueBooking = new VenueBooking();
+      newVenueBooking.playerTotal = data.playerTotal;
+      newVenueBooking.bookingTime = DateTime.fromISO(data.bookingTime);
+      newVenueBooking.duration = data.duration;
+      newVenueBooking.totalPrice = data.totalPrice;
+      newVenueBooking.profileId = profileData.id;
+      newVenueBooking.venueId = params.id;
+      newVenueBooking.venueChooseSportId = data.venueChooseSportId;
+      newVenueBooking.orderId = `#${generateRandomId(14)}`;
 
-        await newVenueBooking.save();
+      await newVenueBooking.save();
 
-        if (data.coachBookingId) {
-          const coachBookingData = await CoachBooking.findOrFail(
-            data.coachBookingId
-          );
-          coachBookingData.venueBookingId = newVenueBooking.id;
+      if (data.coachBookingId) {
+        const coachBookingData = await CoachBooking.findOrFail(
+          data.coachBookingId
+        );
+        coachBookingData.venueBookingId = newVenueBooking.id;
 
-          await coachBookingData.save();
-        } else if (data.lfgMatchId) {
-          const lfgMatchData = await LfgMatch.findOrFail(data.lfgMatchId);
-          lfgMatchData.venueBookingId = newVenueBooking.id;
+        await coachBookingData.save();
+      } else if (data.lfgMatchId) {
+        const lfgMatchData = await LfgMatch.findOrFail(data.lfgMatchId);
+        lfgMatchData.venueBookingId = newVenueBooking.id;
 
-          await lfgMatchData.save();
-        }
+        await lfgMatchData.save();
+      }
 
-        return response.created({
-          message: "Venue booked successfully!",
-        });
-      } catch (error) {
-        if (error.status === 422) {
-          throw new CustomValidationException(error.messages);
-        } else if (error.status === 404) {
-          throw new DataNotFoundException("Data not found!");
-        } else if (error.status === 403) {
-          throw new ForbiddenException();
-        }
+      return response.created({
+        message: "Venue booked successfully!",
+      });
+    } catch (error) {
+      if (error.status === 422) {
+        throw new CustomValidationException(error.messages);
+      } else if (error.status === 404) {
+        throw new DataNotFoundException("Data not found!");
+      } else if (error.status === 403) {
+        throw new ForbiddenException();
       }
     }
   }
@@ -126,6 +121,7 @@ export default class UsersController {
           tmp.preload("profile", (tmp) => {
             tmp.preload("domicile");
           });
+          tmp.preload("venuePhotos");
         })
         .preload("venueChooseSport")
         .where("profile_id", auth.user?.id)
@@ -143,6 +139,7 @@ export default class UsersController {
           tmp.preload("profile", (tmp) => {
             tmp.preload("domicile");
           });
+          tmp.preload("venuePhotos");
         })
         .preload("venueChooseSport", (tmp) => {
           tmp.preload("favSport");
@@ -163,6 +160,7 @@ export default class UsersController {
           tmp.preload("profile", (tmp) => {
             tmp.preload("domicile");
           });
+          tmp.preload("venuePhotos");
         })
         .preload("venueChooseSport", (tmp) => {
           tmp.preload("favSport");
