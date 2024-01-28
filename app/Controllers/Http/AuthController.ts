@@ -185,6 +185,7 @@ export default class AuthController {
       return response.ok({
         message: "Login success!",
         token: token.token,
+        roleId: token.user.roleId,
       });
     } catch (error) {
       if (error.status === 422) {
