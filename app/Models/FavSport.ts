@@ -10,6 +10,7 @@ import {
 import Profile from "./Profile";
 import VenueChooseSport from "./VenueChooseSport";
 import LfgMatch from "./LfgMatch";
+import Team from "./Team";
 
 export default class FavSport extends BaseModel {
   @column({ isPrimary: true })
@@ -37,4 +38,7 @@ export default class FavSport extends BaseModel {
 
   @hasMany(() => LfgMatch)
   public lfgMatches: HasMany<typeof LfgMatch>;
+
+  @hasMany(() => Team)
+  public teams: HasMany<typeof Team>;
 }

@@ -282,4 +282,14 @@ export default class VenuesController {
       }
     }
   }
+
+  public async getNearbyCups({ response, auth }: HttpContextContract) {
+    const cupData = await Cup.query()
+      .preload("venue")
+      .whereHas("profile", (builder) => {
+        builder.where("domicile_id", auth.user!.profile.domicile.id);
+      });
+
+    return response.ok({ message: "Data fetched!", data: cupData });
+  }
 }

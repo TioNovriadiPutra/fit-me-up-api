@@ -24,15 +24,22 @@ Route.group(() => {
 
 Route.group(() => {
   Route.group(() => {
+    Route.get("/", "UsersController.getTransactions");
+    Route.put("/top-up", "UsersController.topUp");
+    Route.put("/withdraw", "UsersController.withdraw");
+  }).prefix("/transaction");
+  Route.group(() => {
+    Route.post("/", "UsersController.addTeam");
+    Route.get("/join/:id", "UsersController.joinTeam");
+    Route.get("/leave/:id", "UsersController.leaveTeam");
+  }).prefix("/team");
+  Route.group(() => {
     Route.get("/active", "UsersController.getActiveBooking").as(
       "user.book.get-active-booking"
     );
     Route.get("/history", "UsersController.getHistoryBooking").as(
       "user.book.get-history-booking"
     );
-    Route.get("/transaction", "UsersController.getTransactions");
-    Route.put("/top-up", "UsersController.topUp");
-    Route.put("/withdraw", "UsersController.withdraw");
     Route.get("/detail/:id", "UsersController.showBookingDetail").as(
       "user.book.show-booking-detail"
     );
@@ -84,12 +91,17 @@ Route.group(() => {
 }).prefix("/domicile");
 
 Route.group(() => {
-  Route.get("/book/:id", "VenuesController.showVenueRequestDetail").as(
-    "venue.show-venue-request-detail"
+  Route.get("/ongoing", "VenuesController.getOngoingVenueRequest").as(
+    "venue.get-ongoing-venue-request"
   );
-  Route.get("/domicile/:id", "VenuesController.getVenuesByDomicile").as(
-    "venue.get-venues-by-domicile"
+  Route.get("/history", "VenuesController.getVenueRequestHistory").as(
+    "venue.get-venue-request-history"
   );
+  Route.get("/owner", "VenuesController.getOwnerVenueList").as(
+    "venue.get-owner-venue-list"
+  );
+  Route.get("/cup/nearby", "VenuesController.getNearbyCups");
+  Route.post("/cup", "VenuesController.addCup");
 
   Route.group(() => {
     Route.get("/", "VenuesController.getPendingVenueRequest").as(
@@ -103,19 +115,15 @@ Route.group(() => {
     );
   }).prefix("/pending");
 
-  Route.get("/ongoing", "VenuesController.getOngoingVenueRequest").as(
-    "venue.get-ongoing-venue-request"
+  Route.get("/book/:id", "VenuesController.showVenueRequestDetail").as(
+    "venue.show-venue-request-detail"
   );
-  Route.get("/history", "VenuesController.getVenueRequestHistory").as(
-    "venue.get-venue-request-history"
-  );
-  Route.get("/owner", "VenuesController.getOwnerVenueList").as(
-    "venue.get-owner-venue-list"
+  Route.get("/domicile/:id", "VenuesController.getVenuesByDomicile").as(
+    "venue.get-venues-by-domicile"
   );
   Route.get("/detail/:id", "VenuesController.showVenueDetail").as(
     "venue.show-venue-detail"
   );
-  Route.post("/cup", "VenuesController.addCup");
 })
   .prefix("/venue")
   .middleware(["auth"]);
@@ -170,4 +178,11 @@ Route.group(() => {
   );
 })
   .prefix("/coach")
+  .middleware(["auth"]);
+
+Route.group(() => {
+  Route.get("/", "TeamsController.getNearbyTeams");
+  Route.get("/join/:id", "TeamsController.joinCup");
+})
+  .prefix("/team")
   .middleware(["auth"]);

@@ -6,8 +6,10 @@ import generateRandomId from "App/Helpers/GenerateRandomId";
 import CoachBooking from "App/Models/CoachBooking";
 import LfgMatch from "App/Models/LfgMatch";
 import Profile from "App/Models/Profile";
+import Team from "App/Models/Team";
 import Transaction from "App/Models/Transaction";
 import VenueBooking from "App/Models/VenueBooking";
+import AddTeamValidator from "App/Validators/AddTeamValidator";
 import BookCoachValidator from "App/Validators/BookCoachValidator";
 import BookVenueValidator from "App/Validators/BookVenueValidator";
 import TopUpValidator from "App/Validators/TopUpValidator";
@@ -284,6 +286,56 @@ export default class UsersController {
     } catch (error) {
       if (error.status === 404) {
         throw new DataNotFoundException("Profile data not found!");
+      }
+    }
+  }
+
+  public async addTeam({ request, response, auth }: HttpContextContract) {
+    try {
+      const data = await request.validate(AddTeamValidator);
+
+      const newTeam = new Team();
+      newTeam.teamName = data.teamName;
+      newTeam.domicileId = data.domicileId;
+      newTeam.favSportId = data.favSportId;
+      newTeam.profileId = auth.user!.profile.id;
+
+      await newTeam.save();
+
+      await newTeam.related("members").attach([auth.user!.profile.id]);
+
+      return response.created({ message: "Team created!" });
+    } catch (error) {
+      if (error.status === 422) {
+        throw new CustomValidationException(error.messages);
+      }
+    }
+  }
+
+  public async joinTeam({ response, auth, params }: HttpContextContract) {
+    try {
+      const teamData = await Team.findOrFail(params.id);
+
+      await teamData.related("members").attach([auth.user!.profile.id]);
+
+      return response.ok({ message: "Join team success!" });
+    } catch (error) {
+      if (error.status === 404) {
+        throw new DataNotFoundException("Team data not found!");
+      }
+    }
+  }
+
+  public async leaveTeam({ response, auth, params }: HttpContextContract) {
+    try {
+      const teamData = await Team.findOrFail(params.id);
+
+      await teamData.related("members").detach([auth.user!.profile.id]);
+
+      return response.ok({ message: "Leave team success!" });
+    } catch (error) {
+      if (error.status === 404) {
+        throw new DataNotFoundException("Team data not found!");
       }
     }
   }

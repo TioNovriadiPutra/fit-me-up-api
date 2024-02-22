@@ -21,6 +21,7 @@ import CoachBooking from "./CoachBooking";
 import VenueBooking from "./VenueBooking";
 import Cup from "./Cup";
 import Transaction from "./Transaction";
+import Team from "./Team";
 
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
@@ -81,4 +82,12 @@ export default class Profile extends BaseModel {
 
   @hasMany(() => Transaction)
   public transactions: HasMany<typeof Transaction>;
+
+  @hasOne(() => Team)
+  public teams: HasOne<typeof Team>;
+
+  @manyToMany(() => Team, {
+    pivotTable: "team_members",
+  })
+  public members: ManyToMany<typeof Team>;
 }

@@ -1,7 +1,15 @@
 import { DateTime } from "luxon";
-import { BaseModel, BelongsTo, belongsTo, column } from "@ioc:Adonis/Lucid/Orm";
+import {
+  BaseModel,
+  BelongsTo,
+  ManyToMany,
+  belongsTo,
+  column,
+  manyToMany,
+} from "@ioc:Adonis/Lucid/Orm";
 import Profile from "./Profile";
 import Venue from "./Venue";
+import Team from "./Team";
 
 export default class Cup extends BaseModel {
   @column({ isPrimary: true })
@@ -39,4 +47,9 @@ export default class Cup extends BaseModel {
 
   @belongsTo(() => Venue)
   public venue: BelongsTo<typeof Venue>;
+
+  @manyToMany(() => Team, {
+    pivotTable: "cup_participants",
+  })
+  public participants: ManyToMany<typeof Team>;
 }
