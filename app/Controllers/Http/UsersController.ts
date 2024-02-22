@@ -272,4 +272,19 @@ export default class UsersController {
       }
     }
   }
+
+  public async getTransactions({ response, auth }: HttpContextContract) {
+    try {
+      const profileData = await Profile.query()
+        .preload("transactions")
+        .where("user_id", auth.user!.id)
+        .firstOrFail();
+
+      return response.ok({ message: "Data fetched", data: profileData });
+    } catch (error) {
+      if (error.status === 404) {
+        throw new DataNotFoundException("Profile data not found!");
+      }
+    }
+  }
 }

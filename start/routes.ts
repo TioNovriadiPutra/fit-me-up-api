@@ -30,6 +30,7 @@ Route.group(() => {
     Route.get("/history", "UsersController.getHistoryBooking").as(
       "user.book.get-history-booking"
     );
+    Route.get("/transaction", "UsersController.getTransactions");
     Route.put("/top-up", "UsersController.topUp");
     Route.put("/withdraw", "UsersController.withdraw");
     Route.get("/detail/:id", "UsersController.showBookingDetail").as(
