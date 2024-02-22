@@ -12,6 +12,9 @@ export default class Transaction extends BaseModel {
   @column()
   public transactionNumber: string;
 
+  @column()
+  public transactionType: string;
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 

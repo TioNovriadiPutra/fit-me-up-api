@@ -225,8 +225,11 @@ export default class UsersController {
       const newTransaction = new Transaction();
       newTransaction.nominal = data.nominal;
       newTransaction.transactionNumber = generateRandomId(22);
+      newTransaction.transactionType = "topUp";
+      newTransaction.profileId = profileData.id;
 
-      await profileData.related("transactions").save(newTransaction);
+      await profileData.save();
+      await newTransaction.save();
 
       return response.ok({
         message: "Top up success!",
@@ -251,8 +254,11 @@ export default class UsersController {
       const newTransaction = new Transaction();
       newTransaction.nominal = data.nominal;
       newTransaction.transactionNumber = generateRandomId(22);
+      newTransaction.transactionType = "withdraw";
+      newTransaction.profileId = profileData.id;
 
-      await profileData.related("transactions").save(newTransaction);
+      await profileData.save();
+      await newTransaction.save();
 
       return response.ok({
         message: "Withdraw success!",
