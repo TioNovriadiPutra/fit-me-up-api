@@ -2,9 +2,14 @@ import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import { Status } from "App/Enums/Status";
 import DataNotFoundException from "App/Exceptions/DataNotFoundException";
 import ForbiddenException from "App/Exceptions/ForbiddenException";
+import Cup from "App/Models/Cup";
 import Profile from "App/Models/Profile";
 import Venue from "App/Models/Venue";
 import VenueBooking from "App/Models/VenueBooking";
+import AddCupValidator from "App/Validators/AddCupValidator";
+import { DateTime } from "luxon";
+import Application from "@ioc:Adonis/Core/Application";
+import CustomValidationException from "App/Exceptions/CustomValidationException";
 
 export default class VenuesController {
   public async getVenuesByDomicile({ response, params }: HttpContextContract) {
@@ -249,6 +254,31 @@ export default class VenuesController {
         throw new ForbiddenException();
       } else if (error.status === 404) {
         throw new DataNotFoundException("Venue data not found!");
+      }
+    }
+  }
+
+  public async addCup({ request, response, auth }: HttpContextContract) {
+    try {
+      const data = await request.validate(AddCupValidator);
+
+      const newCup = new Cup();
+      newCup.cupName = data.cupName;
+      newCup.maxTeam = data.cupMaxTeam;
+      newCup.cupTime = DateTime.fromISO(data.cupDateTime);
+      newCup.prize = data.cupPrize;
+      newCup.thumbnail = data.cupThumbnail.clientName;
+      newCup.profileId = auth.user!.profile.id;
+      newCup.venueId = data.venueId;
+
+      await data.cupThumbnail.move(Application.publicPath("uploads/cups"), {
+        name: data.cupThumbnail.clientName,
+      });
+
+      return response.created({ message: "Cup added successfully!" });
+    } catch (error) {
+      if (error.status === 422) {
+        throw new CustomValidationException(error.messages);
       }
     }
   }

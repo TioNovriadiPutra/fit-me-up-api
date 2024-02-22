@@ -87,6 +87,7 @@ Route.group(() => {
   Route.get("/domicile/:id", "VenuesController.getVenuesByDomicile").as(
     "venue.get-venues-by-domicile"
   );
+
   Route.group(() => {
     Route.get("/", "VenuesController.getPendingVenueRequest").as(
       "venue.get-venue-request"
@@ -98,6 +99,7 @@ Route.group(() => {
       "venue.pendin.decline-venue-request"
     );
   }).prefix("/pending");
+
   Route.get("/ongoing", "VenuesController.getOngoingVenueRequest").as(
     "venue.get-ongoing-venue-request"
   );
@@ -110,6 +112,7 @@ Route.group(() => {
   Route.get("/detail/:id", "VenuesController.showVenueDetail").as(
     "venue.show-venue-detail"
   );
+  Route.post("/cup", "VenuesController.addCup");
 })
   .prefix("/venue")
   .middleware(["auth"]);

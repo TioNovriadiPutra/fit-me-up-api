@@ -26,6 +26,12 @@ export default class AddCupValidator {
   public schema = schema.create({
     cupName: schema.string(),
     cupMaxTeam: schema.number(),
+    cupDateTime: schema.string(),
+    cupPrize: schema.number(),
+    cupThumbnail: schema.file({
+      extnames: ["jpg", "png", "jpeg"],
+    }),
+    venueId: schema.number(),
   });
 
   /**
