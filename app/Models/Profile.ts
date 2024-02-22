@@ -20,6 +20,7 @@ import LfgMatch from "./LfgMatch";
 import CoachBooking from "./CoachBooking";
 import VenueBooking from "./VenueBooking";
 import Cup from "./Cup";
+import Transaction from "./Transaction";
 
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
@@ -77,4 +78,7 @@ export default class Profile extends BaseModel {
 
   @hasMany(() => Cup)
   public cups: HasMany<typeof Cup>;
+
+  @hasMany(() => Transaction)
+  public transactions: HasMany<typeof Transaction>;
 }

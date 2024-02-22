@@ -6,6 +6,7 @@ import generateRandomId from "App/Helpers/GenerateRandomId";
 import CoachBooking from "App/Models/CoachBooking";
 import LfgMatch from "App/Models/LfgMatch";
 import Profile from "App/Models/Profile";
+import Transaction from "App/Models/Transaction";
 import VenueBooking from "App/Models/VenueBooking";
 import BookCoachValidator from "App/Validators/BookCoachValidator";
 import BookVenueValidator from "App/Validators/BookVenueValidator";
@@ -221,7 +222,11 @@ export default class UsersController {
       const profileData = await Profile.findByOrFail("user_id", auth.user!.id);
       profileData.activeBalance = profileData.activeBalance + data.nominal;
 
-      await profileData.save();
+      const newTransaction = new Transaction();
+      newTransaction.nominal = data.nominal;
+      newTransaction.transactionNumber = generateRandomId(22);
+
+      await profileData.related("transactions").save(newTransaction);
 
       return response.ok({
         message: "Top up success!",
@@ -243,7 +248,11 @@ export default class UsersController {
       const profileData = await Profile.findByOrFail("user_id", auth.user!.id);
       profileData.activeBalance = profileData.activeBalance - data.nominal;
 
-      await profileData.save();
+      const newTransaction = new Transaction();
+      newTransaction.nominal = data.nominal;
+      newTransaction.transactionNumber = generateRandomId(22);
+
+      await profileData.related("transactions").save(newTransaction);
 
       return response.ok({
         message: "Withdraw success!",
