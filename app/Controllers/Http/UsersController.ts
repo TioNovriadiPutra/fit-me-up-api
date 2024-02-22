@@ -9,6 +9,7 @@ import Profile from "App/Models/Profile";
 import VenueBooking from "App/Models/VenueBooking";
 import BookCoachValidator from "App/Validators/BookCoachValidator";
 import BookVenueValidator from "App/Validators/BookVenueValidator";
+import TopUpValidator from "App/Validators/TopUpValidator";
 import { DateTime } from "luxon";
 
 export default class UsersController {
@@ -209,6 +210,50 @@ export default class UsersController {
         if (error.status === 404) {
           throw new DataNotFoundException("LFG Match data not found!");
         }
+      }
+    }
+  }
+
+  public async topUp({ request, response, auth }: HttpContextContract) {
+    try {
+      const data = await request.validate(TopUpValidator);
+
+      const profileData = await Profile.findByOrFail("user_id", auth.user!.id);
+      profileData.activeBalance = profileData.activeBalance + data.nominal;
+
+      await profileData.save();
+
+      return response.ok({
+        message: "Top up success!",
+        data: profileData.activeBalance,
+      });
+    } catch (error) {
+      if (error.status === 422) {
+        throw new CustomValidationException(error.messages);
+      } else if (error.status === 404) {
+        throw new DataNotFoundException("Profile data not found!");
+      }
+    }
+  }
+
+  public async withdraw({ request, response, auth }: HttpContextContract) {
+    try {
+      const data = await request.validate(TopUpValidator);
+
+      const profileData = await Profile.findByOrFail("user_id", auth.user!.id);
+      profileData.activeBalance = profileData.activeBalance - data.nominal;
+
+      await profileData.save();
+
+      return response.ok({
+        message: "Withdraw success!",
+        data: profileData.activeBalance,
+      });
+    } catch (error) {
+      if (error.status === 422) {
+        throw new CustomValidationException(error.messages);
+      } else if (error.status === 404) {
+        throw new DataNotFoundException("Profile data not found!");
       }
     }
   }
