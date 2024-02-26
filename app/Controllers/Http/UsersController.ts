@@ -1,4 +1,5 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
+import { Status } from "App/Enums/Status";
 import CustomValidationException from "App/Exceptions/CustomValidationException";
 import DataNotFoundException from "App/Exceptions/DataNotFoundException";
 import ForbiddenException from "App/Exceptions/ForbiddenException";
@@ -129,8 +130,8 @@ export default class UsersController {
         })
         .preload("venueChooseSport")
         .where("profile_id", auth.user?.id)
-        .andWhere("status", false)
-        .andWhere("accept", true);
+        .andWhere("status", Status["PENDING"])
+        .orWhere("status", Status["ACCEPT"]);
 
       return response.ok({ message: "Data fetched!", data: activeBookingData });
     }

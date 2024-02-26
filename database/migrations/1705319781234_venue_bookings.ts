@@ -10,8 +10,10 @@ export default class extends BaseSchema {
       table.datetime("booking_time").notNullable();
       table.integer("duration").notNullable();
       table.integer("total_price").notNullable();
-      table.boolean("accept").notNullable().defaultTo(false);
-      table.boolean("status").notNullable().defaultTo(false);
+      table
+        .enum("status", ["pending", "decline", "accept", "done"])
+        .notNullable()
+        .defaultTo("pending");
       table
         .timestamp("created_at", { useTz: true })
         .notNullable()

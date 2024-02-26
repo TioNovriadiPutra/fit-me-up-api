@@ -30,7 +30,7 @@ export default class extends BaseSchema {
       table
         .integer("fav_sport_id")
         .unsigned()
-        .references("fac_sports.id")
+        .references("fav_sports.id")
         .onDelete("CASCADE")
         .notNullable();
     });
