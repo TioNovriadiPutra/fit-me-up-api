@@ -54,6 +54,7 @@ export default class AuthController {
       newProfile.fullName = data.fullName;
       newProfile.dateBirth = data.dateBirth;
       newProfile.domicileId = data.domicileId;
+      newProfile.phoneNumber = data.phoneNumber;
 
       await newUser.related("profile").save(newProfile);
 

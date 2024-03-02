@@ -1,7 +1,7 @@
 import { schema, CustomMessages, rules } from "@ioc:Adonis/Core/Validator";
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
-export default class RegisterUserValidator {
+export default class UpdateUserProfileValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -23,6 +23,10 @@ export default class RegisterUserValidator {
    *     ])
    *    ```
    */
+  public refs = schema.refs({
+    userId: this.ctx.auth.user!.id,
+  });
+
   public schema = schema.create({
     fullName: schema.string([
       rules.alpha({
@@ -30,23 +34,28 @@ export default class RegisterUserValidator {
       }),
     ]),
     email: schema.string([
-      rules.email({
-        ignoreMaxLength: true,
-      }),
+      rules.email(),
       rules.unique({
         table: "users",
         column: "email",
+        whereNot: {
+          id: this.refs.userId,
+        },
       }),
     ]),
     dateBirth: schema.date(),
-    password: schema.string([rules.minLength(8), rules.confirmed()]),
+    password: schema.string.optional([rules.minLength(8), rules.confirmed()]),
+    profilePic: schema.file.optional({
+      extnames: ["png", "jpg", "jpeg"],
+    }),
     phoneNumber: schema.string([
       rules.mobile({
         locale: ["id-ID"],
       }),
     ]),
-    favSportIds: schema.array([rules.minLength(1)]).members(schema.number()),
-    domicileId: schema.number(),
+    favSportIds: schema.array().members(schema.number()),
+    bankId: schema.number.optional(),
+    bankNumber: schema.string.optional(),
   });
 
   /**
@@ -60,18 +69,5 @@ export default class RegisterUserValidator {
    * }
    *
    */
-  public messages: CustomMessages = {
-    "fullName.required": "Full Name must be filled!",
-    "fullName.alpha": "Full Name can only contain alphabets!",
-    "email.required": "Email must be filled!",
-    "email.email": "Email format incorrect!",
-    "email.unique": "Email already registered!",
-    "dateBirth.required": "Date of Birth must be filled!",
-    "password.required": "Password must be filled!",
-    "password.minLength": "Password at least 8 characters!",
-    "password_confirmation.confirmed": "Password Confirmation failed!",
-    "favSportIds.required": "Favorite sports must be choose!",
-    "favSportIds.minLength": "Favorite sports must be choose!",
-    "domicileId.required": "Domicile must be filled!",
-  };
+  public messages: CustomMessages = {};
 }

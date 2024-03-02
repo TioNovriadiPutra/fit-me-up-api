@@ -22,6 +22,7 @@ import VenueBooking from "./VenueBooking";
 import Cup from "./Cup";
 import Transaction from "./Transaction";
 import Team from "./Team";
+import Bank from "./Bank";
 
 export default class Profile extends BaseModel {
   @column({ isPrimary: true })
@@ -37,7 +38,13 @@ export default class Profile extends BaseModel {
   public activeBalance: number;
 
   @column()
+  public phoneNumber: string;
+
+  @column()
   public profilePic?: string;
+
+  @column()
+  public bankNumber?: string;
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
@@ -50,6 +57,9 @@ export default class Profile extends BaseModel {
 
   @column()
   public domicileId?: number;
+
+  @column()
+  public bankId?: number;
 
   @belongsTo(() => User)
   public user: BelongsTo<typeof User>;
@@ -90,4 +100,7 @@ export default class Profile extends BaseModel {
     pivotTable: "team_members",
   })
   public members: ManyToMany<typeof Team>;
+
+  @belongsTo(() => Bank)
+  declare bank: BelongsTo<typeof Bank>;
 }

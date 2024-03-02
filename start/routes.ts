@@ -23,16 +23,20 @@ Route.group(() => {
 }).prefix("/auth");
 
 Route.group(() => {
+  Route.put("/", "UsersController.updateUserProfile");
+
   Route.group(() => {
     Route.get("/", "UsersController.getTransactions");
     Route.put("/top-up", "UsersController.topUp");
     Route.put("/withdraw", "UsersController.withdraw");
   }).prefix("/transaction");
+
   Route.group(() => {
     Route.post("/", "UsersController.addTeam");
     Route.get("/join/:id", "UsersController.joinTeam");
     Route.get("/leave/:id", "UsersController.leaveTeam");
   }).prefix("/team");
+
   Route.group(() => {
     Route.get("/active", "UsersController.getActiveBooking").as(
       "user.book.get-active-booking"
@@ -50,6 +54,7 @@ Route.group(() => {
       "user.book.book-venue"
     );
   }).prefix("/book");
+
   Route.get("/join-lfg/:id", "UsersController.joinLfgMatch").as(
     "user.join-lfg-match"
   );

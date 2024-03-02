@@ -9,12 +9,16 @@ import LfgMatch from "App/Models/LfgMatch";
 import Profile from "App/Models/Profile";
 import Team from "App/Models/Team";
 import Transaction from "App/Models/Transaction";
+import User from "App/Models/User";
 import VenueBooking from "App/Models/VenueBooking";
 import AddTeamValidator from "App/Validators/AddTeamValidator";
 import BookCoachValidator from "App/Validators/BookCoachValidator";
 import BookVenueValidator from "App/Validators/BookVenueValidator";
 import TopUpValidator from "App/Validators/TopUpValidator";
+import UpdateUserProfileValidator from "App/Validators/UpdateUserProfileValidator";
+import Drive from "@ioc:Adonis/Core/Drive";
 import { DateTime } from "luxon";
+import Application from "@ioc:Adonis/Core/Application";
 
 export default class UsersController {
   public async bookCoach({
@@ -337,6 +341,47 @@ export default class UsersController {
     } catch (error) {
       if (error.status === 404) {
         throw new DataNotFoundException("Team data not found!");
+      }
+    }
+  }
+
+  public async updateUserProfile({
+    request,
+    response,
+    auth,
+  }: HttpContextContract) {
+    try {
+      const data = await request.validate(UpdateUserProfileValidator);
+
+      const userData = await User.findOrFail(auth.user!.id);
+      userData.email = data.email;
+
+      const profileData = await Profile.findOrFail(auth.user!.id);
+      profileData.fullName = data.fullName;
+      profileData.dateBirth = data.dateBirth;
+      profileData.phoneNumber = data.phoneNumber;
+      profileData.bankId = data.bankId;
+      profileData.bankNumber = data.bankNumber;
+
+      if (data.profilePic) {
+        if (profileData.profilePic) {
+          await Drive.delete(profileData.profilePic);
+        }
+
+        profileData.profilePic = data.profilePic.clientName;
+        await data.profilePic.move(Application.publicPath("uploads/profiles"), {
+          name: data.profilePic.clientName,
+        });
+      }
+
+      await userData.related("profile").save(profileData);
+
+      return response.ok({ message: "User profile updated!" });
+    } catch (error) {
+      if (error.status === 422) {
+        throw new CustomValidationException(error.messages);
+      } else if (error.status === 404) {
+        throw new DataNotFoundException("Profile data not found!");
       }
     }
   }
