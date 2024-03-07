@@ -10,6 +10,11 @@ import AddCupValidator from "App/Validators/AddCupValidator";
 import { DateTime } from "luxon";
 import Application from "@ioc:Adonis/Core/Application";
 import CustomValidationException from "App/Exceptions/CustomValidationException";
+import UpdateVenueValidator from "App/Validators/UpdateVenueValidator";
+import VenueChooseSport from "App/Models/VenueChooseSport";
+import VenueSchedule from "App/Models/VenueSchedule";
+import VenuePhoto from "App/Models/VenuePhoto";
+import User from "App/Models/User";
 
 export default class VenuesController {
   public async getVenuesByDomicile({ response, params }: HttpContextContract) {
@@ -266,30 +271,104 @@ export default class VenuesController {
       newCup.cupName = data.cupName;
       newCup.maxTeam = data.cupMaxTeam;
       newCup.cupTime = DateTime.fromISO(data.cupDateTime);
-      newCup.prize = data.cupPrize;
+      newCup.price = data.cupPrize;
       newCup.thumbnail = data.cupThumbnail.clientName;
-      newCup.profileId = auth.user!.profile.id;
+      newCup.profileId = auth.user!.id;
       newCup.venueId = data.venueId;
 
       await data.cupThumbnail.move(Application.publicPath("uploads/cups"), {
         name: data.cupThumbnail.clientName,
       });
 
+      await newCup.save();
+
       return response.created({ message: "Cup added successfully!" });
     } catch (error) {
       if (error.status === 422) {
         throw new CustomValidationException(error.messages);
+      } else {
+        console.log(error);
       }
     }
   }
 
   public async getNearbyCups({ response, auth }: HttpContextContract) {
+    const userData = await User.query()
+      .preload("profile")
+      .where("id", auth.user!.id)
+      .firstOrFail();
+
     const cupData = await Cup.query()
       .preload("venue")
       .whereHas("profile", (builder) => {
-        builder.where("domicile_id", auth.user!.profile.domicile.id);
+        builder.where("domicile_id", userData.profile.domicileId!);
       });
 
     return response.ok({ message: "Data fetched!", data: cupData });
+  }
+
+  public async updateVenueProfile({
+    request,
+    response,
+    params,
+  }: HttpContextContract) {
+    try {
+      const data = await request.validate(UpdateVenueValidator);
+
+      const venueData = await Venue.findOrFail(params.id);
+      venueData.venueName = data.venueName;
+      venueData.venueAddress = data.venueAddress;
+      venueData.venueTimeOpen = data.venueTimeOpen;
+      venueData.venueTimeClose = data.venueTimeClose;
+      venueData.venueDescription = data.venueDescription;
+
+      const venueChooseSportData = await VenueChooseSport.findByOrFail(
+        "venue_id",
+        venueData.id
+      );
+      venueChooseSportData.venueMaxCapacity = data.venueMaxCapacity;
+      venueChooseSportData.venuePricing = data.venuePricing;
+
+      await VenueSchedule.query().where("venue_id", venueData.id).delete();
+
+      for (let i = 0; i < data.venueSchedules.length; i++) {
+        const newVenueSchedules = new VenueSchedule();
+        newVenueSchedules.venueScheduleDay = data.venueSchedules[i];
+        newVenueSchedules.venueId = venueData.id;
+
+        await newVenueSchedules.save();
+      }
+
+      await venueData.save();
+      await venueChooseSportData.save();
+
+      if (data.venuePhotos) {
+        for (let j = 0; j < data.venuePhotos.length; j++) {
+          const newVenuePhoto = new VenuePhoto();
+          newVenuePhoto.photoUrl = data.venuePhotos[j].clientName;
+          newVenuePhoto.venueId = venueData.id;
+
+          await data.venuePhotos[j].move(
+            Application.publicPath("uploads/venues"),
+            {
+              name: data.venuePhotos[j].clientName,
+              overwrite: true,
+            }
+          );
+
+          await newVenuePhoto.save();
+        }
+      }
+
+      return response.ok({
+        message: "Venue updated!",
+      });
+    } catch (error) {
+      if (error.status === 422) {
+        throw new CustomValidationException(error.messages);
+      } else if (error.status === 404) {
+        throw new DataNotFoundException("Venue data not found!");
+      }
+    }
   }
 }

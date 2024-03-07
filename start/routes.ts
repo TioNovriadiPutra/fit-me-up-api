@@ -119,7 +119,9 @@ Route.group(() => {
       "venue.pendin.decline-venue-request"
     );
   }).prefix("/pending");
-
+  Route.put("/:id", "VenuesController.updateVenueProfile").as(
+    "venue.update-venue-profile"
+  );
   Route.get("/book/:id", "VenuesController.showVenueRequestDetail").as(
     "venue.show-venue-request-detail"
   );

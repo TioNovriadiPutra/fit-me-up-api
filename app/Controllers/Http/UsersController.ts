@@ -303,16 +303,18 @@ export default class UsersController {
       newTeam.teamName = data.teamName;
       newTeam.domicileId = data.domicileId;
       newTeam.favSportId = data.favSportId;
-      newTeam.profileId = auth.user!.profile.id;
+      newTeam.profileId = auth.user!.id;
 
       await newTeam.save();
 
-      await newTeam.related("members").attach([auth.user!.profile.id]);
+      await newTeam.related("members").attach([auth.user!.id]);
 
       return response.created({ message: "Team created!" });
     } catch (error) {
       if (error.status === 422) {
         throw new CustomValidationException(error.messages);
+      } else {
+        console.log(error);
       }
     }
   }

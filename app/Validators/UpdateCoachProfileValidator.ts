@@ -50,6 +50,13 @@ export default class UpdateCoachProfileValidator {
     profilePic: schema.file.optional({
       extnames: ["png", "jpg", "jpeg"],
     }),
+    schedules: schema.array([rules.minLength(1)]).members(
+      schema.object().members({
+        scheduleDay: schema.number([rules.range(1, 7)]),
+        scheduleTimeStart: schema.string(),
+        scheduleTimeEnd: schema.string(),
+      })
+    ),
   });
 
   /**

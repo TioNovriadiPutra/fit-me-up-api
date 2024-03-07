@@ -11,6 +11,8 @@ import UpdateCoachProfileValidator from "App/Validators/UpdateCoachProfileValida
 import Drive from "@ioc:Adonis/Core/Drive";
 import Application from "@ioc:Adonis/Core/Application";
 import { Status } from "App/Enums/Status";
+import Database from "@ioc:Adonis/Lucid/Database";
+import CoachSchedule from "App/Models/CoachSchedule";
 
 export default class CoachesController {
   public async getAvailableCoaches({ response }: HttpContextContract) {
@@ -81,6 +83,23 @@ export default class CoachesController {
 
         const coachData = await Coach.findByOrFail("profile_id", auth.user.id);
         coachData.bookPricePerHour = data.bookPricePerHour;
+
+        await Database.rawQuery(
+          `DELETE FROM coach_schedules
+          WHERE coach_id = ?`,
+          [coachData.id]
+        );
+
+        for (let i = 0; i < data.schedules.length; i++) {
+          const newCoachSchedule = new CoachSchedule();
+          newCoachSchedule.scheduleDay = data.schedules[i].scheduleDay;
+          newCoachSchedule.scheduleTimeStart =
+            data.schedules[i].scheduleTimeStart;
+          newCoachSchedule.scheduleTimeEnd = data.schedules[i].scheduleTimeEnd;
+          newCoachSchedule.coachId = coachData.id;
+
+          await newCoachSchedule.save();
+        }
 
         await userData.related("profile").save(profileData);
         await profileData.related("coach").save(coachData);

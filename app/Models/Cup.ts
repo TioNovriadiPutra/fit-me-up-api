@@ -25,7 +25,7 @@ export default class Cup extends BaseModel {
   public cupTime: DateTime;
 
   @column()
-  public prize: number;
+  public price: number;
 
   @column()
   public thumbnail: string;

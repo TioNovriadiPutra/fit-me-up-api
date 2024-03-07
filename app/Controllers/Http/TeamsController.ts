@@ -2,14 +2,20 @@ import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import DataNotFoundException from "App/Exceptions/DataNotFoundException";
 import Cup from "App/Models/Cup";
 import Team from "App/Models/Team";
+import User from "App/Models/User";
 
 export default class TeamsController {
   public async getNearbyTeams({ response, auth }: HttpContextContract) {
+    const userData = await User.query()
+      .preload("profile")
+      .where("id", auth.user!.id)
+      .firstOrFail();
+
     const teamData = await Team.query()
       .preload("domicile")
       .preload("favSport")
       .preload("members")
-      .where("domicile_id", auth.user!.profile.domicile.id);
+      .where("domicile_id", userData.profile.domicileId!);
 
     return response.ok({ message: "Data fetched!", data: teamData });
   }
