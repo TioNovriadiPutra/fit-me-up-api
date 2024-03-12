@@ -24,9 +24,14 @@ export default class TeamsController {
     try {
       const cupData = await Cup.findOrFail(params.id);
 
-      await cupData
-        .related("participants")
-        .attach([auth.user!.profile.teams.id]);
+      const userData = await User.query()
+        .preload("profile", (tmp) => {
+          tmp.preload("teams");
+        })
+        .where("id", auth.user!.id)
+        .firstOrFail();
+
+      await cupData.related("participants").attach([userData.profile.teams.id]);
 
       return response.ok({ message: "Join cup success!" });
     } catch (error) {
